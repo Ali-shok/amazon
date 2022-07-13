@@ -4,6 +4,7 @@ import axios from 'axios';
 import logger from 'use-reducer-logger';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import { Helmet } from 'react-helmet-async';
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -19,7 +20,6 @@ const reducer = (state, action) => {
 };
 
 function HomeScreen() {
-  //const [products, setProducts] = useState([]);
   const [{ loading, products, error }, dispatch] = useReducer(logger(reducer), {
     products: [],
     error: '',
@@ -35,12 +35,14 @@ function HomeScreen() {
       } catch (err) {
         dispatch({ type: 'FETCH_FAIL', payload: err.message });
       }
-      //setProducts(result.data);
     };
     fetchData();
   }, []);
   return (
     <div>
+      <Helmet>
+        <title>amazona</title>
+      </Helmet>
       <h1>Featured Products</h1>
       <div className="products">
         <Row>
