@@ -6,7 +6,7 @@ import Card from 'react-bootstrap/Card';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Badge from 'react-bootstrap/Badge';
 import Button from 'react-bootstrap/button';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Rating from '../Components/Rating';
 import { Helmet } from 'react-helmet-async';
 import LoadingBox from '../Components/LoadingBox';
@@ -29,6 +29,7 @@ const reducer = (state, action) => {
 
 function ProductScreen() {
   const params = useParams();
+  const navigate = useNavigate();
   const { slug } = params;
   const [{ loading, product, error }, dispatch] = useReducer(reducer, {
     product: '',
@@ -64,6 +65,7 @@ function ProductScreen() {
       type: 'CART_ADD_ITEM',
       payload: { ...product, quantity },
     });
+    navigate('/cart');
   };
 
   return loading ? (
