@@ -1,20 +1,45 @@
 import React, { useContext } from 'react';
 import Col from 'react-bootstrap/Col';
-import ListGroupItem from 'react-bootstrap/ListGroupItem';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Row from 'react-bootstrap/Row';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import MessageBox from '../Components/MessageBox';
 import { Store } from '../Store';
 import Button from 'react-bootstrap/Button';
 import Card from 'react-bootstrap/Card';
+import axios from 'axios';
 
 function CartScreen() {
+  const navigate = useNavigate();
   const { state, dispatch: ctxDispatch } = useContext(Store);
   const {
     cart: { cartItems },
   } = state;
+
+  const updateCartHandler = async (item, quantity) => {
+    const { data } = await axios.get(`/api/products/${item._id}`);
+    if (data.countInStock < quantity) {
+      window.alert('Sorry, Product Is Out Of The Stock');
+      return;
+    }
+    ctxDispatch({
+      type: 'CART_ADD_ITEM',
+      payload: { ...item, quantity },
+    });
+  };
+
+  const removeItemHandler = (item) => {
+    ctxDispatch({
+      type: 'CART_REMOVE_ITEM',
+      payload: item,
+    });
+  };
+
+  function checkOutHandler() {
+    navigate('/signin?redirect=/shipping');
+  }
+
   return (
     <div>
       <Helmet>
@@ -30,7 +55,7 @@ function CartScreen() {
           ) : (
             <ListGroup>
               {cartItems.map((item) => (
-                <ListGroupItem key={item.id}>
+                <ListGroup.Item key={item._id}>
                   <Row className="align-items-center">
                     <Col md={4}>
                       <img
@@ -38,14 +63,23 @@ function CartScreen() {
                         alt={item.name}
                         className="img-fluid rounded img-thumbanil"
                       ></img>{' '}
-                      <Link to={`product/${item.slug}`}>{item.name}</Link>
+                      <Link to={`/product/${item.slug}`}>{item.name}</Link>
                     </Col>
                     <Col md={3}>
-                      <Button variant="light" disabled={item.quantity === 1}>
+                      <Button
+                        onClick={() =>
+                          updateCartHandler(item, item.quantity - 1)
+                        }
+                        variant="light"
+                        disabled={item.quantity === 1}
+                      >
                         <i className="fas fa-minus-circle"></i>
                       </Button>{' '}
                       <span>{item.quantity}</span>{' '}
                       <Button
+                        onClick={() =>
+                          updateCartHandler(item, item.quantity + 1)
+                        }
                         variant="light"
                         disabled={item.quantity === item.countInStock}
                       >
@@ -54,12 +88,12 @@ function CartScreen() {
                     </Col>
                     <Col md={3}>${item.price}</Col>
                     <Col md={2}>
-                      <Button>
+                      <Button onClick={() => removeItemHandler(item)}>
                         <i variant="light" className="fas fa-trash"></i>
                       </Button>
                     </Col>
                   </Row>
-                </ListGroupItem>
+                </ListGroup.Item>
               ))}
             </ListGroup>
           )}
@@ -68,16 +102,17 @@ function CartScreen() {
           <Card>
             <Card.Body>
               <ListGroup variant="flush">
-                <ListGroupItem>
+                <ListGroup.Item>
                   <h3>
                     Subtotal ({cartItems.reduce((a, c) => a + c.quantity, 0)}{' '}
                     items) : $
                     {cartItems.reduce((a, c) => a + c.quantity * c.price, 0)}
                   </h3>
-                </ListGroupItem>
-                <ListGroupItem>
+                </ListGroup.Item>
+                <ListGroup.Item>
                   <div className="d-grid">
                     <Button
+                      onClick={checkOutHandler}
                       variant="primary"
                       type="button"
                       disabled={cartItems.length === 0}
@@ -85,7 +120,7 @@ function CartScreen() {
                       procced to Checkout
                     </Button>
                   </div>
-                </ListGroupItem>
+                </ListGroup.Item>
               </ListGroup>
             </Card.Body>
           </Card>
