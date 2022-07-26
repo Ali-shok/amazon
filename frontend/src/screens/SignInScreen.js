@@ -9,7 +9,6 @@ function SignInScreen() {
   const { search } = useLocation();
   const redirectUrl = new URLSearchParams(search).get('redirect');
   const redirect = redirectUrl ? redirectUrl : '/';
-  console.log(search);
   return (
     <Container className="small-container">
       <Helmet>
