@@ -9,6 +9,7 @@ function SignInScreen() {
   const { search } = useLocation();
   const redirectUrl = new URLSearchParams(search).get('redirect');
   const redirect = redirectUrl ? redirectUrl : '/';
+  console.log(search);
   return (
     <Container className="small-container">
       <Helmet>
@@ -29,7 +30,7 @@ function SignInScreen() {
         </div>
         <div className="mb-3">
           New Customer?{' '}
-          <Link to={`/signup?redirect=/shipping`}>Create Your account</Link>
+          <Link to={`/signup?redirect=${redirect}`}>Create Your account</Link>
         </div>
       </Form>
     </Container>
