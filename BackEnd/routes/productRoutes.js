@@ -18,7 +18,7 @@ productRoutes.get('/slug/:slug', async (req, res) => {
 });
 
 productRoutes.get('/:id', async (req, res) => {
-  const product = await data.products.findById(req.params.id);
+  const product = await Product.findById(req.params.id);
   if (product) {
     res.send(product);
   } else {

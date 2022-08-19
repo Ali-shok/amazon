@@ -1,5 +1,4 @@
 import express from 'express';
-import data from './data.js';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import seedRoutes from './routes/seedRoutes.js';
@@ -24,9 +23,9 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/seed', seedRoutes);
 
-app.use('/api/products/', productRoutes);
+app.use('/api/products', productRoutes);
 
-app.use('/api/users/', userRouter);
+app.use('/api/users', userRouter);
 
 const port = process.env.port || 5000;
 
